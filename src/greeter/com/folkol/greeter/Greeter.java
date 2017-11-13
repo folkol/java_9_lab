@@ -1,8 +1,7 @@
 package com.folkol.greeter;
 
-public class Greeter
+public interface Greeter
 {
-    public static String greet() {
-        return "Hello, world!";
-    }
+    public String greet();
 }
+
