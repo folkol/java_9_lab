@@ -12,12 +12,13 @@ module Name {
 	requires ...;
 	exports ...;
 	provides ...
-		from ...;
-	needs ...;
+		with ...;
+	uses ...;
 }
 ```
 
 Types of modules:
+
 - Normal modules (with module-info.class)
 - Implicit modules (traditional jars on the module path)
 	- Depends on everything
@@ -145,14 +146,87 @@ $ java --module-path mods -m hello/com.folkol.hello.Hello
 Hello, world!
 ```
 
-## Hello world, Enterprise Edition
+## Hello world, Enterprise Edition!
 
 ```
+$ cat src/greeter/module-info.java
+module greeter {
+    exports com.folkol.greeter;
+    provides com.folkol.greeter.Greeter
+        with com.folkol.greeter.GreeterImpl;
+}
 
+$ cat src/greeter/com/folkol/greeter/Greeter.java
+package com.folkol.greeter;
+
+public interface Greeter
+{
+    public String greet();
+}
+
+$ cat src/greeter/com/folkol/greeter/GreeterImpl.java
+package com.folkol.greeter;
+
+public class GreeterImpl implements Greeter
+{
+    public String greet() {
+        return "Hello from GreeterImpl";
+    }
+}
+```
+
+```
+$ cat src/othergreeter/module-info.java
+module othergreeter {
+    requires greeter;
+    exports com.folkol.othergreeter;
+    provides com.folkol.greeter.Greeter
+        with com.folkol.othergreeter.OtherGreeterImpl;
+}
+
+$ cat src/othergreeter/com/folkol/othergreeter/OtherGreeterImpl.java
+package com.folkol.othergreeter;
+
+import com.folkol.greeter.Greeter;
+
+public class OtherGreeterImpl implements Greeter
+{
+    public String greet() {
+        return "Hello from OtherGreeterImpl";
+    }
+}
+```
+
+```
+$ cat src/hello/module-info.java
+module hello {
+    requires greeter;
+    uses com.folkol.greeter.Greeter;
+}
+
+$ cat src/hello/com/folkol/hello/Hello.java
+package com.folkol.hello;
+
+import com.folkol.greeter.Greeter;
+import java.util.ServiceLoader;
+
+public class Hello
+{
+    public static void main(String[] args) {
+        for(Greeter greeter : ServiceLoader.load(Greeter.class)) {
+            System.out.println(greeter.greet());
+        }
+    }
+}
 ```
 
 ```
 $ javac -d mods --module-source-path src/ $(find src -name "*.java")
+```
+```
+$ java --module-path mods -m hello/com.folkol.hello.Hello
+Hello from OtherGreeterImpl
+Hello from GreeterImpl
 ```
 
 ## References

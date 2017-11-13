@@ -1,12 +1,14 @@
 package com.folkol.hello;
 
 import com.folkol.greeter.Greeter;
+import java.util.ServiceLoader;
 
 public class Hello
 {
     public static void main(String[] args) {
-        String greeting = Greeter.greet();
-        System.out.println(greeting);
+        for(Greeter greeter : ServiceLoader.load(Greeter.class)) {
+            System.out.println(greeter.greet());
+        }
     }
 }
 
