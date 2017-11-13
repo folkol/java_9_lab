@@ -229,9 +229,43 @@ Hello from OtherGreeterImpl
 Hello from GreeterImpl
 ```
 
+## Modular Jars
+
+A module can be either an exploded directory with a module-info.class, or a .jar archive with a module-info.class in the root.
+
+```
+$ jar --create --file=mlib/hello@1.0.jar --main-class=com.folkol.hello.Hello -C mods/hello .
+$ jar --create --file=mlib/greeter@1.0.jar -C mods/greeter .
+$ jar --create --file=mlib/othergreeter@1.0.jar -C mods/othergreeter .
+$ java -p mlib -m hello
+Hello from OtherGreeterImpl
+Hello from GreeterImpl
+```
+
+```
+$ jar --describe-module --file=mlib/hello\@1.0.jar
+hello jar:file:///Users/folkol/code/java_9_lab/mlib/hello@1.0.jar/!module-info.class
+requires greeter
+requires java.base mandated
+uses com.folkol.greeter.Greeter
+contains com.folkol.hello
+main-class com.folkol.hello.Hello
+```
+
+```
+$ jar --create --file=mlib/othergreeter@2.0.jar -C mods/othergreeter .
+$ java -p mlib -m hello
+Error occurred during initialization of boot layer
+java.lang.module.FindException: Two versions of module othergreeter found in mlib (othergreeter@2.0.jar and othergreeter@1.0.jar)
+```
+
 ## References
 
 - http://blog.joda.org/2017/05/java-se-9-jpms-automatic-modules.html
 - https://blog.codecentric.de/en/2015/12/first-steps-with-java9-jigsaw-part-2/
 - http://openjdk.java.net/projects/jigsaw/quick-start
-
+- https://blog.plan99.net/is-jigsaw-good-or-is-it-wack-ec634d36dd6f
+- https://www.slideshare.net/RobertScholte/java-9-and-the-impact-on-maven-projects
+- https://sites.google.com/a/athaydes.com/renato-athaydes/posts/guidetojava9-compilejarrun
+- https://blog.codefx.org/java/java-9-migration-guide/
+- 
