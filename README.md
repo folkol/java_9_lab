@@ -259,6 +259,33 @@ Error occurred during initialization of boot layer
 java.lang.module.FindException: Two versions of module othergreeter found in mlib (othergreeter@2.0.jar and othergreeter@1.0.jar)
 ```
 
+## Automatic Modules
+
+Normal jars on the Module Path will define a "Automatic Module". These modules will be named after the jar file, aand export all packages and depend on all other modules.
+
+```
+$ cat old_jar/com/folkol/old/Legacy.java
+package com.folkol.old;
+
+public class Legacy {
+   public String hello() {
+      return "Hello, from old jar!";
+   }
+}
+
+$ javac old_jar/com/folkol/old/Legacy.java
+$ jar --create --file=mlib/legacy.jar -C old_jar .
+$ javac -d mods -p mlib --module-source-path src/ $(find src -name "*.java")
+warning: using incubating module(s): jdk.incubator.httpclient
+1 warning
+$ java -p mods:mlib -m hello/com.folkol.hello.Hello
+Hello from OtherGreeterImpl
+Hello from GreeterImpl
+Hello, from old jar!
+
+
+```
+
 ## References
 
 - http://blog.joda.org/2017/05/java-se-9-jpms-automatic-modules.html
@@ -268,4 +295,5 @@ java.lang.module.FindException: Two versions of module othergreeter found in mli
 - https://www.slideshare.net/RobertScholte/java-9-and-the-impact-on-maven-projects
 - https://sites.google.com/a/athaydes.com/renato-athaydes/posts/guidetojava9-compilejarrun
 - https://blog.codefx.org/java/java-9-migration-guide/
-- 
+- http://openjdk.java.net/projects/jigsaw/spec/sotms/#automatic-modules
+

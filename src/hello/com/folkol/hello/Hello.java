@@ -9,6 +9,7 @@ public class Hello
         for(Greeter greeter : ServiceLoader.load(Greeter.class)) {
             System.out.println(greeter.greet());
         }
+        System.out.println(com.folkol.old.Legacy.hello());
     }
 }
 
