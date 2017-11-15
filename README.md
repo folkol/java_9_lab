@@ -282,8 +282,6 @@ $ java -p mods:mlib -m hello/com.folkol.hello.Hello
 Hello from OtherGreeterImpl
 Hello from GreeterImpl
 Hello, from old jar!
-
-
 ```
 
 ## References
